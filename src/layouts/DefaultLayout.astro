@@ -5,6 +5,7 @@ import SiteMeta from '../components/SiteMeta.astro'
 import Header from '../components/Header.astro'
 import Footer from '../components/Footer.astro'
 import { getCurrentLocale } from '../i18n/i18n'
+import { BASE_PATH } from '../utils/basePath'
 
 /**
  * DefaultLayout
@@ -46,12 +47,17 @@ const currentLocale = getCurrentLocale(Astro.currentLocale)
   <head>
     <!-- Browser language detection — runs before paint to avoid redirect flash.
          Auto-redirects once on first visit; manual switcher clicks override the preference. -->
-    <script is:inline>
+    <script is:inline define:vars={{ basePath: BASE_PATH }}>
       ;(function () {
         var SUPPORTED = ['cs', 'de', 'lt', 'no']
         var STORAGE_KEY = 'kidcy-locale-pref'
         try {
-          var firstSegment = window.location.pathname.split('/').filter(Boolean)[0] || ''
+          // Path without the site base (e.g. /kidcy) so the locale is the first segment
+          var path = window.location.pathname
+          if (basePath && (path === basePath || path.indexOf(basePath + '/') === 0)) {
+            path = path.slice(basePath.length) || '/'
+          }
+          var firstSegment = path.split('/').filter(Boolean)[0] || ''
           var onLocalizedPage = SUPPORTED.indexOf(firstSegment) !== -1
 
           // Landing on a locale-prefixed page — persist it as the preference
@@ -64,7 +70,7 @@ const currentLocale = getCurrentLocale(Astro.currentLocale)
           var stored = localStorage.getItem(STORAGE_KEY)
           if (stored !== null) {
             if (SUPPORTED.indexOf(stored) !== -1) {
-              window.location.replace('/' + stored + window.location.pathname + window.location.search + window.location.hash)
+              window.location.replace(basePath + '/' + stored + path + window.location.search + window.location.hash)
             }
             return
           }
@@ -83,7 +89,7 @@ const currentLocale = getCurrentLocale(Astro.currentLocale)
 
           localStorage.setItem(STORAGE_KEY, detected)
           if (detected !== 'en') {
-            window.location.replace('/' + detected + window.location.pathname + window.location.search + window.location.hash)
+            window.location.replace(basePath + '/' + detected + path + window.location.search + window.location.hash)
           }
         } catch (_) {}
       })()

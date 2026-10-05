@@ -14,6 +14,8 @@
  * @see WCAG 4.1.2 — Name, Role, Value
  */
 
+import { stripBasePath } from './basePath'
+
 // ── Path helpers ──────────────────────────────────────────────────────────────
 
 /** Strip trailing slashes; return '/' for empty paths */
@@ -23,18 +25,19 @@ export const normalizePath = (pathname: string): string => {
 }
 
 /**
- * Remove the locale prefix from a path.
+ * Remove the site base path and the locale prefix from a path.
  *
  * Examples (given localePrefixes = ['cs', 'de', 'lt', 'no']):
  *   /cs/about  →  /about
  *   /about     →  /about
  *   /          →  /
+ *   /kidcy/cs/about  →  /about   (when the site base is /kidcy/)
  *
  * Uses the URL API internally to avoid issues with malformed paths
  * containing double slashes or encoded characters.
  */
 export const stripLocalePrefix = (pathname: string, localePrefixes: string[]): string => {
-  const normalized = normalizePath(pathname)
+  const normalized = normalizePath(stripBasePath(pathname))
   if (normalized === '/') return normalized
 
   // Use a dummy base so the URL constructor accepts relative paths

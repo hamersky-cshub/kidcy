@@ -1,4 +1,5 @@
 import { getRelativeLocaleUrl } from 'astro:i18n'
+import { stripBasePath } from '../utils/basePath'
 
 export const DEFAULT_LOCALE = 'en'
 export const SUPPORTED_LOCALES = ['en', 'cs', 'de', 'lt', 'no'] as const
@@ -46,7 +47,7 @@ export const localizePath = (locale: string | undefined, href: string): string =
 }
 
 export const stripLocaleFromPathname = (pathname: string): string => {
-  const normalizedPath = pathname.replace(/\/+$/, '') || '/'
+  const normalizedPath = stripBasePath(pathname).replace(/\/+$/, '') || '/'
 
   if (normalizedPath === '/') {
     return normalizedPath

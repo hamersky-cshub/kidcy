@@ -50,6 +50,11 @@ jobs:
 
       - name: Build with Astro
         run: npm run build
+        env:
+          # Serve the site from the Pages URL, including the /<repo> sub-path
+          # for project sites (empty for <owner>.github.io repos)
+          SITE_URL: ${{ steps.pages.outputs.origin }}
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}
         
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5

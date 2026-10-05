@@ -4,11 +4,16 @@ import compress from 'astro-compress'
 import icon from 'astro-icon'
 import tailwindcss from '@tailwindcss/vite'
 import { fileURLToPath } from 'url'
+import prefixBasePath from './integrations/prefix-base-path.mjs'
 
 // https://astro.build/config
 export default defineConfig({
   compressHTML: true,
-  site: 'https://kidcyproject.github.io/',
+  // SITE_URL and BASE_PATH are set by the deploy workflow from the GitHub Pages
+  // settings, e.g. https://<owner>.github.io and /<repo> for a project site.
+  // Locally the site is served from the root.
+  site: process.env.SITE_URL || 'https://kidcyproject.github.io/',
+  base: process.env.BASE_PATH || '/',
   trailingSlash: 'always',
   i18n: {
     defaultLocale: 'en',
@@ -18,7 +23,7 @@ export default defineConfig({
     },
   },
   output: 'static',
-  integrations: [mdx(), icon(), compress()],
+  integrations: [mdx(), icon(), prefixBasePath(), compress()],
   vite: {
     build: {
       cssCodeSplit: false,

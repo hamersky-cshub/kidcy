@@ -1,5 +1,6 @@
 ---
 import { ClientRouter } from 'astro:transitions'
+import { withBasePath } from '../utils/basePath'
 
 /**
  * SiteMeta Component
@@ -44,7 +45,7 @@ const subtitle = 'Wise Web Wanderers'
 <meta property="og:description" content={description} />
 <meta property="og:type" content="website" />
 <meta property="og:url" content={url} />
-<meta property="og:image" content={new URL(image, Astro.site).toString()} />
+<meta property="og:image" content={new URL(withBasePath(image), Astro.site).toString()} />
 
 <!-- page title -->
 <title>{title} - {subtitle}</title>
